@@ -53,6 +53,7 @@ do
     xset -nocursor
   fi
   xset s off
+  xset s noblank  # never blank the display (needed for the modern surf/webkit2gtk browser)
 
   # Reset the framebuffer's colour-depth
   echo "Resetting the framebuffer's depth...";
@@ -105,20 +106,20 @@ do
       sed -i -e "s/block/none/g" /home/pi/scripts/openhabloader.html
   fi
   # Clean up previously running apps, gracefully at first then harshly
-  killall -TERM kweb 2>/dev/null;
-  echo "kweb terminated";
+  killall -TERM surf 2>/dev/null;
+  echo "surf terminated";
   sleep 2;
 
-  killall -9 kweb 2>/dev/null;
-  echo "Final termination of kweb";
+  killall -9 surf 2>/dev/null;
+  echo "Final termination of surf";
 
   # Run unclutter
   unclutter &
 
   # Start the browser (See http://peter.sh/experiments/chromium-command-line-switches/)
-  echo "Starting kweb...";
+  echo "Starting surf...";
 
-  kweb -KJ /home/pi/scripts/openhabloader.html &
+  WEBKIT_DISABLE_COMPOSITING_MODE=1 LIBGL_ALWAYS_SOFTWARE=1 surf file:///home/pi/scripts/openhabloader.html &
 
   if grep -q "hostapd" /home/pi/scripts/raspberry-pi-turnkey/status.json; then sleep 500; else sleep 21; fi
   while :
@@ -139,18 +140,18 @@ do
 
         while :
         do
-          # Start kweb if it dies and restart it
+          # Start surf if it dies and restart it
           # Clean up previously running apps, gracefully at first then harshly
-          killall -TERM kweb 2>/dev/null;
-          echo "kweb terminated";
+          killall -TERM surf 2>/dev/null;
+          echo "surf terminated";
           sleep 2;
 
-          killall -9 kweb 2>/dev/null;
-          echo "Final termination of kweb";
+          killall -9 surf 2>/dev/null;
+          echo "Final termination of surf";
 
           # Start the browser
-          echo "Starting kweb...";
-          kweb -KJ /home/pi/scripts/oneui/index.html
+          echo "Starting surf...";
+          WEBKIT_DISABLE_COMPOSITING_MODE=1 LIBGL_ALWAYS_SOFTWARE=1 surf file:///home/pi/scripts/oneui/index.html
           sleep 10;
         done
       fi
